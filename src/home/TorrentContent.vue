@@ -23,7 +23,7 @@ import { Folder, Document, FolderOpened } from '@element-plus/icons-vue';
 import api from '../api';
 
 const props = defineProps(['hash']);
-const selectedFileIndex = defineModel('selectedFileIndex');
+const selected_file_index = defineModel('selected_file_index');
 const dialogVisible = ref(false);
 const loading = ref(false);
 const defaultCheckedKeys = ref([-1]);
@@ -41,7 +41,7 @@ const dialogWidth = computed(() => {
 
 const tree = ref();
 const save = () => {
-    selectedFileIndex.value = tree.value.getCheckedKeys(true);
+    selected_file_index.value = tree.value.getCheckedKeys(true);
     dialogVisible.value = false;
 }
 const show = () => {

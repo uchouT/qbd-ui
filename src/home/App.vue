@@ -48,16 +48,12 @@ import api from "../api";
 import { loadConfig } from "../config";
 
 onMounted(loadConfig);
-// TODO: check
+
 const checkBeforeAddTask = async () => {
-  let uploaderOk;
-  let qbOk;
-  await api.get("api/test")
+  return await api.get("api/test")
     .then(res => {
-      uploaderOk = res['data'].uploaderOk;
-      qbOk = res['data'].qbOk;
+      return res.data
     })
-  return uploaderOk && qbOk;
 }
 
 

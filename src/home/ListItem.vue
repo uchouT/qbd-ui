@@ -7,7 +7,7 @@
             <el-col :span="20"
                 style="display: flex; flex-direction: column; gap: 10px; justify-content: space-between;">
                 <div class="task-progress">
-                    分片: {{ props.taskItem.currentPartNum + 1 }}/{{ props.taskItem.totalPartNum }}
+                    分片: {{ props.taskItem.current_part_num + 1 }}/{{ props.taskItem.total_part_num }}
                 </div>
                 <el-space class="task-status-tag">
                     <el-tag :type="getStatusType(props.taskItem.status)" size="small" style="text-align: right;">
@@ -25,11 +25,11 @@
             </el-col>
 
             <el-col :span="2" style="display: flex; flex-direction: column; gap: 10px; justify-content: space-between;">
-                <el-button plain size="small" v-if="props.taskItem.status === 'PAUSED'"
+                <el-button plain size="small" v-if="props.taskItem.status === 'Paused'"
                     @click="startTask(props.taskItem.hash)" type="success" :loading="actionLoading[props.taskItem.hash]"
                     icon="VideoPlay">
                 </el-button>
-                <el-button plain size="small" v-if="props.taskItem.status === 'DOWNLOADING'"
+                <el-button plain size="small" v-if="props.taskItem.status === 'Downloading'"
                     @click="stopTask(props.taskItem.hash)" type="warning" :loading="actionLoading[props.taskItem.hash]"
                     icon="VideoPause">
                 </el-button>
@@ -51,15 +51,15 @@
                 </el-row>
                 <el-row>
                     <span class="label">保存路径:</span>
-                    <span>{{ props.taskItem.savePath }}</span>
+                    <span>{{ props.taskItem.save_path }}</span>
                 </el-row>
                 <el-row>
                     <span class="label">上传路径:</span>
-                    <span>{{ props.taskItem.uploadPath }}</span>
+                    <span>{{ props.taskItem.upload_path }}</span>
                 </el-row>
                 <el-row>
                     <span class="label">上传方式:</span>
-                    <span>{{ props.taskItem.uploadType }}</span>
+                    <span>{{ props.taskItem.uploader.type }}</span>
                 </el-row>
             </div>
         </template>
@@ -77,31 +77,31 @@ const emit = defineEmits(['refresh'])
 const showDetail = ref(false)
 // 状态映射
 const statusTextMap = {
-    'ON_TASK': '上传中',
-    'FINISHED': '上传完成',
-    'DOWNLOADED': '下载完成',
-    'DOWNLOADING': '下载中',
-    'ALL_FINISHED': '全部完成',
-    'ERROR': '错误',
-    'PAUSED': '已暂停'
+    'OnTask': '上传中',
+    'Finished': '上传完成',
+    'Downloaded': '下载完成',
+    'Downloading': '下载中',
+    'Done': '全部完成',
+    'Error': '错误',
+    'Paused': '已暂停'
 }
 
 const statusTypeMap = {
-    'ON_TASK': 'warning',
-    'FINISHED': 'success',
-    'DOWNLOADED': 'success',
-    'DOWNLOADING': 'primary',
-    'ALL_FINISHED': 'success',
-    'ERROR': 'danger',
-    'PAUSED': 'info'
+    'OnTask': 'warning',
+    'Finished': 'success',
+    'Downloaded': 'success',
+    'Downloading': 'primary',
+    'Done': 'success',
+    'Error': 'danger',
+    'Paused': 'info'
 }
 
 const processStatusMap = {
-    'ON_TASK': 'warning',
-    'ALL_FINISHED': 'success',
-    'ERROR': 'exception',
-    'PAUSED': 'warning',
-    'DOWNLOADED': 'success'
+    'OnTask': 'warning',
+    'Done': 'success',
+    'Error': 'exception',
+    'Paused': 'warning',
+    'Downloaded': 'success'
 }
 
 const getProcessStatus = (status) => {

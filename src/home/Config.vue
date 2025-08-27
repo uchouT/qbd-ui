@@ -6,23 +6,23 @@
                     <el-scrollbar>
                         <el-form label-position="right" label-width="140px">
                             <el-form-item label="QB Host">
-                                <el-input v-model="config.qbHost" placeholder="http://localhost:8080" />
+                                <el-input v-model="config.qb_host" placeholder="http://localhost:8080" />
                             </el-form-item>
                             <el-form-item label="QB 用户名">
-                                <el-input v-model="config.qbUsername" placeholder="admin" />
+                                <el-input v-model="config.qb_username" placeholder="admin" />
                             </el-form-item>
                             <el-form-item label="QB 密码">
-                                <el-input v-model="config.qbPassword" type="password" placeholder="password" />
+                                <el-input v-model="config.qb_password" type="password" placeholder="password" />
                             </el-form-item>
                             <el-form-item>
                                 <el-button @click="test('qb')" bg text :loading="qbTestLoading" icon="Odometer">测试
                                 </el-button>
                             </el-form-item>
-                            <el-form-item label="仅限内网 IP">
-                                <el-switch v-model="config.onlyInnerIP" />
+                            <el-form-item label="only inner IP">
+                                <el-switch v-model="config.is_only_inner_ip" />
                             </el-form-item>
-                            <el-form-item label="登录过期">
-                                <el-switch v-model="config.verifyLoginIP" />
+                            <el-form-item label="allow multi-login">
+                                <el-switch v-model="config.multi_login" />
                             </el-form-item>
                             <el-form-item label="Username">
                                 <el-input v-model="config.account.username" placeholder="admin" />
@@ -31,10 +31,10 @@
                                 <el-input v-model="config.account.password" type="password" placeholder="password" />
                             </el-form-item>
                             <el-form-item label="默认分享率">
-                                <el-input-number v-model="config.defaultRatioLimit" placeholder="-2" />
+                                <el-input-number v-model="config.default_ratio_limit" placeholder="-2" />
                             </el-form-item>
                             <el-form-item label="默认做种时间">
-                                <el-input-number v-model="config.defaultSeedingTimeLimit" placeholder="-2">
+                                <el-input-number v-model="config.default_seeding_time_limit" placeholder="-2">
                                     <template #suffix>分钟</template>
                                 </el-input-number>
                             </el-form-item>
@@ -46,24 +46,24 @@
 
                         <el-form label-position="right" label-width="140px">
                             <el-form-item label="Rclone Host">
-                                <el-input v-model="config.rcloneHost" placeholder="http://localhost:5572" />
+                                <el-input v-model="config.rclone_host" placeholder="http://localhost:5572" />
                             </el-form-item>
                             <el-form-item label="Rclone Username">
-                                <el-input v-model="config.rcloneUserName" placeholder="admin" />
+                                <el-input v-model="config.rclone_username" placeholder="admin" />
                             </el-form-item>
                             <el-form-item label="Rclone Password">
-                                <el-input v-model="config.rclonePassword" type="password" placeholder="secret" />
+                                <el-input v-model="config.rclone_password" type="password" placeholder="secret" />
                             </el-form-item>
                             <el-form-item>
-                                <el-button @click="test('rclone')" bg text :loading="rcloneTestLoading"
+                                <el-button @click="test('Rclone')" bg text :loading="RcloneTestLoading"
                                     icon="Odometer">测试
                                 </el-button>
                             </el-form-item>
                             <el-form-item label="默认下载路径">
-                                <el-input v-model="config.defaultSavePath" placeholder="/downloads" />
+                                <el-input v-model="config.default_save_path" placeholder="/downloads" />
                             </el-form-item>
                             <el-form-item label="默认上传路径">
-                                <el-input v-model="config.defaultUploadPath" placeholder="/uploads" />
+                                <el-input v-model="config.default_upload_path" placeholder="/uploads" />
                             </el-form-item>
                         </el-form>
                     </el-scrollbar>
@@ -98,7 +98,7 @@
 import { ref, computed } from 'vue';
 import { useWindowSize, useLocalStorage } from '@vueuse/core'
 import api from '../api';
-import CryptoJS from "crypto-js";
+
 import { ElMessage } from 'element-plus';
 import CONFIG from '../config';
 
@@ -119,9 +119,7 @@ const dialogWidth = computed(() => {
 const saveConfig = () => {
     loading.value = true
     Object.assign(CONFIG.value, config.value)
-    if (config.value.account.password) {
-        config.value.account.password = CryptoJS.MD5(config.value.account.password).toString();
-    }
+
     api.post('api/config', config.value)
         .then(res => {
             ElMessage.success(res.message)
@@ -133,7 +131,7 @@ const saveConfig = () => {
         })
 }
 const qbTestLoading = ref(false)
-const rcloneTestLoading = ref(false)
+const RcloneTestLoading = ref(false)
 const dialogVisible = ref(false)
 const activeName = ref('first')
 
@@ -152,10 +150,10 @@ const test = (type) => {
     if (type === 'qb') {
         qbTestLoading.value = true
         api.post('api/test', {
-            type: 'qb',
-            host: config.value.qbHost,
-            username: config.value.qbUsername,
-            password: config.value.qbPassword
+            test_type: 'qb',
+            host: config.value.qb_host,
+            username: config.value.qb_username,
+            password: config.value.qb_password
         }).then(res => {
             ElMessage.success(res.message)
         }).finally(() => {
@@ -163,17 +161,17 @@ const test = (type) => {
         })
         return
     }
-    if (type === 'rclone') {
-        rcloneTestLoading.value = true
+    if (type === 'Rclone') {
+        RcloneTestLoading.value = true
         api.post('api/test', {
-            type: 'rclone',
-            host: config.value.rcloneHost,
-            username: config.value.rcloneUserName,
-            password: config.value.rclonePassword
+            test_type: 'Rclone',
+            host: config.value.rclone_host,
+            username: config.value.rclone_username,
+            password: config.value.rclone_password
         }).then(res => {
             ElMessage.success(res.message)
         }).finally(() => {
-            rcloneTestLoading.value = false
+            RcloneTestLoading.value = false
         })
         return
     }

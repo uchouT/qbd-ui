@@ -10,15 +10,15 @@
                             <el-input v-model:model-value="torrentUrl.url" placeholder=" torrent url..."
                                 :autosize="{ minRows: 2 }" type="textarea" :disabled="metadataDownloading" />
                         </el-form-item>
-                        <el-form-item label="保存路径" prop="savePath">
-                            <el-input v-model:model-value="torrentUrl.savePath" type="textarea"
-                                :autosize="{ minRows: 1 }" :disabled="metadataDownloading" :placeholder="savepath" />
+                        <el-form-item label="保存路径" prop="save_path">
+                            <el-input v-model:model-value="torrentUrl.save_path" type="textarea"
+                                :autosize="{ minRows: 1 }" :disabled="metadataDownloading" :placeholder="save_path" />
                         </el-form-item>
                     </el-form>
                 </el-tab-pane>
                 <el-tab-pane label="File" name="file">
-                    <el-upload ref="upload" action="/api/torrent" :limit="1" :auto-upload="false" :data="uploadData"
-                        name="torrent" :headers="uploadHeaders" :on-success="handleUploadSuccess"
+                    <el-upload ref="upload" action="/api/torrent" accept=".torrent" :limit="1" :auto-upload="false"
+                        :data="uploadData" name="torrent" :headers="uploadHeaders" :on-success="handleUploadSuccess"
                         :on-error="handleUploadError" :on-change="handleFileChange" v-model:file-list="filelist">
                         <template #trigger>
                             <el-button type="primary">选择文件</el-button>
@@ -26,7 +26,7 @@
                     </el-upload>
 
                     <el-form-item label="保存路径" style="margin-top: 16px;">
-                        <el-input v-model:model-value="torrentFile.savePath" type="textarea" :placeholder="savepath"
+                        <el-input v-model:model-value="torrentFile.save_path" type="textarea" :placeholder="save_path"
                             :disabled="metadataDownloading" />
                     </el-form-item>
                     <template #tip>
@@ -58,7 +58,7 @@ import { useWindowSize } from '@vueuse/core'
 import api from '../api'
 import Task from './Task.vue'
 import CONFIG from '../config'
-const savepath = ref();
+const save_path = ref();
 const emit = defineEmits(['load'])
 const { width } = useWindowSize()
 const dialogVisible = ref(false)
@@ -69,10 +69,10 @@ const fileSelected = ref(false) // 文件是否已选择
 const torrentParsed = ref(false)
 const torrentUrl = ref({
     url: '',
-    savePath: '',
+    save_path: '',
 })
 const torrentFile = ref({
-    savePath: ''
+    save_path: ''
 })
 const upload = ref(null)
 const rules = ref({
@@ -81,17 +81,19 @@ const rules = ref({
 
 const taskAdd = ref({
     torrent_res: {
-        torrentName: '',
-        savePath: '',
+        torrent_name: '',
+        save_path: '',
         hash: ''
     },
-    uploadType: 'rclone',
-    uploadPath: null,
-    maxSize: null,
-    seedingTimeLimit: -2,
-    ratioLimit: -2,
-    customizeContent: false,
-    selectedFileIndex: null
+    upload_type: {
+        type: 'Rclone',
+    },
+    upload_path: '',
+    max_size: null,
+    seeding_time_limit: -2,
+    ratio_limit: -2,
+    custom_content: false,
+    selected_file_index: null
 })
 
 const addTask = (fun) => {
@@ -111,7 +113,7 @@ const uploadHeaders = ref({
 
 // 计算属性：上传数据
 const uploadData = computed(() => ({
-    savePath: torrentFile.value.savePath
+    save_path: torrentFile.value.save_path
 }))
 
 // 计算属性：是否可以确认
@@ -146,30 +148,32 @@ const dialogWidth = computed(() => {
 const show = () => {
     dialogVisible.value = true
     activeTab.value = 'url'
-    savepath.value = CONFIG.value.defaultSavePath || "请输入保存路径";
+    save_path.value = CONFIG.value.default_save_path || "请输入保存路径";
     fileSelected.value = false
     if (!torrentParsed.value) {
         taskAdd.value = {
             torrent_res: {
-                torrentName: '',
-                savePath: '',
+                torrent_name: '',
+                save_path: '',
                 hash: ''
             },
-            uploadType: 'rclone',
-            uploadPath: null,
-            maxSize: null,
-            seedingTimeLimit: -2,
-            ratioLimit: -2,
-            customizeContent: false,
-            selectedFileIndex: null
+            upload_type: {
+                type: 'Rclone',
+            },
+            upload_path: '',
+            max_size: null,
+            seeding_time_limit: -2,
+            ratio_limit: -2,
+            custom_content: false,
+            selected_file_index: null
         }
     }
     torrentUrl.value = {
         url: '',
-        savePath: ''
+        save_path: ''
     }
     torrentFile.value = {
-        savePath: ''
+        save_path: ''
     }
     filelist.value = []
 
@@ -189,14 +193,10 @@ const handleConfirm = async () => {
 const handleUrlConfirm = async () => {
     metadataDownloading.value = true
 
-    // 准备请求数据，如果 savePath 为空则不包含该字段
+    // 准备请求数据，如果 save_path 为空则不包含该字段
     const requestData = {
-        url: torrentUrl.value.url
-    }
-
-    // 只有当 savePath 有值时才包含该字段
-    if (torrentUrl.value.savePath && torrentUrl.value.savePath.trim()) {
-        requestData.savePath = torrentUrl.value.savePath
+        url: torrentUrl.value.url,
+        save_path: torrentUrl.value.save_path
     }
 
     // 调用API添加URL
@@ -228,17 +228,17 @@ const handleFileChange = (file, fileList) => {
 }
 
 
-const handleUploadSuccess = (res, file) => {
+const handleUploadSuccess = (res) => {
     console.log('上传成功:', res)
     metadataDownloading.value = false
-
-    if (res.code >= 200 && res.code < 300) {
+    let code = res.code
+    if (code >= 200 && code < 300) {
         taskAdd.value.torrent_res = res['data'];
         ElMessage.success('种子上传成功')
         torrentParsed.value = true
     } else {
         ElMessage.error(res.message || '上传失败')
-        if (res.code === 403) {
+        if (code === 403) {
             localStorage.removeItem("authorization")
             setTimeout(() => {
                 location.reload()
@@ -261,7 +261,7 @@ const handleUploadError = (error, file) => {
 
 const deleteTorrent = () => {
     let hash = taskAdd.value.torrent_res.hash;
-    api.del(`/api/torrent/?hash=${hash}`)
+    api.del(`/api/torrent?hash=${hash}`)
         .then(res => {
             ElMessage.success("种子删除成功")
         })

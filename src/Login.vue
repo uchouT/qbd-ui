@@ -57,7 +57,7 @@
 <script setup>
 
 import { onMounted, ref } from "vue";
-import CryptoJS from "crypto-js"
+
 import App from "./home/App.vue";
 import api from "./api.js";
 import { useDark, useLocalStorage } from '@vueuse/core'
