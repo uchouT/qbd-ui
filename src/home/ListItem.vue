@@ -13,7 +13,7 @@
                     <el-tag :type="getStatusType(props.taskItem.status)" size="small" style="text-align: right;">
                         {{ getStatusText(props.taskItem.status) }}
                     </el-tag>
-                    <el-tag v-if="props.taskItem.seeding" type="primary" size="small">
+                    <el-tag v-if="props.taskItem.is_seeding" type="primary" size="small">
                         做种中
                     </el-tag>
                 </el-space>
