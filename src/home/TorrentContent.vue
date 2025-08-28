@@ -26,6 +26,7 @@ const props = defineProps(['hash']);
 const selected_file_index = defineModel('selected_file_index');
 const dialogVisible = ref(false);
 const loading = ref(false);
+const fetched = ref(false);
 const defaultCheckedKeys = ref([-1]);
 const defaultExpandedKeys = ref([-1]);
 const { width } = useWindowSize();
@@ -47,12 +48,14 @@ const save = () => {
 const show = () => {
     dialogVisible.value = true;
     loading.value = true;
-    api.get(`/api/torrent?hash=${props.hash}`)
-        .then((res) => {
-            tree.value.setData(res.data);
-        }).finally(() => {
-            loading.value = false;
-        })
+    if (!fetched.value) {
+        api.get(`/api/torrent?hash=${props.hash}`)
+            .then((res) => {
+                tree.value.setData(res.data);
+                fetched.value = true;
+            })
+    }
+    loading.value = false;
 }
 defineExpose({ show })
 </script>
