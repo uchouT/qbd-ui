@@ -9,7 +9,7 @@
             <el-input v-model="taskData.upload_path" :placeholder="upload_path" />
         </el-form-item>
         <el-form-item label="文件大小限制" prop="max_size">
-            <el-input-number v-model="taskData.max_size" precision="0" :min="1" :max="999">
+            <el-input-number v-model="taskData.max_size" :precision=0 :min="1" :max="999">
                 <template #suffix>GB</template>
             </el-input-number>
         </el-form-item>
@@ -55,6 +55,7 @@
 import { computed, ref } from 'vue';
 import { ElMessage } from 'element-plus';
 import CONFIG from '../config';
+import api from '../api';
 import TorrentContent from './TorrentContent.vue';
 const upload_path = computed(() => {
     return CONFIG.value.default_upload_path || '请输入上传路径';
@@ -69,18 +70,42 @@ const rules = ref({
     max_size: [{ required: true, message: '请输入文件大小限制', trigger: 'blur' }]
 })
 
+const checkUploader = async () => {
+    let test_req = {
+        test_type: taskData.value.upload_type.type,
+        host: '',
+        username: '',
+        password: '',
+    }
+    if (test_req.test_type === 'Rclone') {
+        test_req.host = CONFIG.value.rclone_host || '';
+        test_req.username = CONFIG.value.rclone_username || '';
+        test_req.password = CONFIG.value.rclone_password || '';
+    }
+    return await api.post('api/test', test_req)
+}
 const handleSubmit = async () => {
     if (!formRef.value) return
-
+    loading.value = true
     try {
         await formRef.value.validate()
-        loading.value = true
-        emit('ok', () => {
-            loading.value = false
-        })
     } catch (error) {
         ElMessage.warning('请填写完整的信息')
+        return
+    } finally {
+        loading.value = false
     }
+    try {
+        await checkUploader()
+    } catch (error) {
+        ElMessage.error('上传工具测试失败，请检查配置')
+        return
+    } finally {
+        loading.value = false
+    }
+    emit('ok', () => {
+        loading.value = false
+    })
 }
 
 </script>
