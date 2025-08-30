@@ -72,9 +72,7 @@
                     <h2 style="color: var(--el-color-primary)">v{{ useLocalStorage('version', '0.0.0') }}</h2>
                     <img src="../../public/icon.png" alt="icon" style="width: 80px;" />
                     <div class="description" style="max-width:  60%;">
-                        <p>这是作者为满足自身需求以及自娱自乐的一个项目，同时也是作者学习软件开发过程中练手的一个项目。</p>
-                        <p>有任何问题或者建议欢迎提 <a href="https://github.com/uchouT/qb-downloader/issues"
-                                target="_blank">Issues</a>。如果它帮助到了你哪怕一丝一毫，都是对我莫大的鼓励。</p>
+                        <h3>qb-downloader</h3>
                     </div>
                     <el-space>
                         <a href="https://t.me/uchouT" target="_blank" style="color: inherit">
