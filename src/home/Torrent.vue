@@ -200,10 +200,12 @@ const handleUrlConfirm = async () => {
     }
 
     // 调用API添加URL
-    api.post('/api/torrent', requestData)
+    await api.post('/api/torrent', requestData)
         .then(res => {
-            taskAdd.value.torrent_res = res['data']
-            torrentParsed.value = true
+            if (res['data']) {
+                taskAdd.value.torrent_res = res['data'];
+                torrentParsed.value = true
+            }
         })
         .finally(() => {
             metadataDownloading.value = false
@@ -259,27 +261,33 @@ const handleUploadError = (error, file) => {
     ElMessage.error(errorMessage)
 }
 
-const deleteTorrent = () => {
-    let hash = taskAdd.value.torrent_res.hash;
-    api.del(`/api/torrent?hash=${hash}`)
+const deleteMetaAwaiting = async () => {
+    await api.del(`/api/torrent`)
         .then(res => {
             ElMessage.success("种子删除成功")
         })
 }
 
-const handleCancel = () => {
+const deleteWaited = async () => {
+    await api.del(`/api/torrent?hash=${taskAdd.value.torrent_res.hash}`)
+        .then(res => {
+            ElMessage.success("种子删除成功")
+        })
+}
+
+
+const handleCancel = async () => {
     if (metadataDownloading.value) {
-        deleteTorrent();
         //TODO:
         //  如果是 url，中断 export。
         // 如果是 File，中断上传
+        await deleteMetaAwaiting();
         metadataDownloading.value = false
     } else if (torrentParsed.value) {
-        deleteTorrent();
+        await deleteWaited();
         torrentParsed.value = false
     }
     dialogVisible.value = false;
-
 }
 
 defineExpose({ show })
