@@ -1,6 +1,6 @@
 <template>
-    <el-dialog v-model="dialogVisible" append-to-body title="种子内容" :width="dialogWidth" v-loading="loading">
-        <el-tree-v2 ref="tree" show-checkbox :default-checked-keys="defaultCheckedKeys"
+    <el-dialog v-model="dialogVisible" append-to-body title="种子内容" :width="dialogWidth">
+        <el-tree-v2 ref="tree"  v-loading="loading" show-checkbox :default-checked-keys="defaultCheckedKeys"
             :default-expanded-keys="defaultExpandedKeys" node-key="id">
             <template #default="{ node }">
                 <el-icon class="el-icon--left">
@@ -45,11 +45,11 @@ const save = () => {
     selected_file_index.value = tree.value.getCheckedKeys(true);
     dialogVisible.value = false;
 }
-const show = () => {
+const show = async () => {
+    loading.value = true
     dialogVisible.value = true;
-    loading.value = true;
     if (!fetched.value) {
-        api.get(`/api/torrent?hash=${props.hash}`)
+        await api.get(`/api/torrent?hash=${props.hash}`)
             .then((res) => {
                 tree.value.setData(res.data);
                 fetched.value = true;
