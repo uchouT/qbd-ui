@@ -148,7 +148,7 @@ const dialogWidth = computed(() => {
 const show = () => {
     dialogVisible.value = true
     activeTab.value = 'url'
-    save_path.value = CONFIG.value.default_save_path || "请输入保存路径";
+    save_path.value = CONFIG.value.qb.default_save_path || "请输入保存路径";
     fileSelected.value = false
     if (!torrentParsed.value) {
         taskAdd.value = {

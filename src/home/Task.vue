@@ -58,7 +58,7 @@ import CONFIG from '../config';
 import api from '../api';
 import TorrentContent from './TorrentContent.vue';
 const upload_path = computed(() => {
-    return CONFIG.value.default_upload_path || '请输入上传路径';
+    return CONFIG.value.general.default_upload_path || '请输入上传路径';
 });
 const torrentContent = ref();
 const taskData = defineModel('taskData')
@@ -78,9 +78,9 @@ const checkUploader = async () => {
         password: '',
     }
     if (test_req.test_type === 'Rclone') {
-        test_req.host = CONFIG.value.rclone_host || '';
-        test_req.username = CONFIG.value.rclone_username || '';
-        test_req.password = CONFIG.value.rclone_password || '';
+        test_req.host = CONFIG.value.rclone.rclone_host || '';
+        test_req.username = CONFIG.value.rclone.rclone_username || '';
+        test_req.password = CONFIG.value.rclone.rclone_password || '';
     }
     return await api.post('api/test', test_req)
 }
