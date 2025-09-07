@@ -7,29 +7,29 @@
             <el-col :span="20"
                 style="display: flex; flex-direction: column; gap: 10px; justify-content: space-between;">
                 <div class="task-progress">
-                    分片: {{ props.taskItem.current_part_num + 1 }}/{{ props.taskItem.total_part_num }}
+                    分片: {{ props.taskItem.state.current_part_num + 1 }}/{{ props.taskItem.total_part_num }}
                 </div>
                 <el-space class="task-status-tag">
-                    <el-tag :type="getStatusType(props.taskItem.status)" size="small" style="text-align: right;">
-                        {{ getStatusText(props.taskItem.status) }}
+                    <el-tag :type="getStatusType(props.taskItem.state.status)" size="small" style="text-align: right;">
+                        {{ getStatusText(props.taskItem.state.status) }}
                     </el-tag>
-                    <el-tag v-if="props.taskItem.is_seeding" type="primary" size="small">
+                    <el-tag v-if="props.taskItem.state.is_seeding" type="primary" size="small">
                         做种中
                     </el-tag>
                 </el-space>
                 <div><el-progress :text-inside="true" :show-text="false"
-                        :status="getProcessStatus(props.taskItem.status)"
-                        :percentage="(props.taskItem.progress * 100).toFixed(2)">
+                        :status="getProcessStatus(props.taskItem.state.status)"
+                        :percentage="(props.taskItem.state.progress * 100).toFixed(2)">
                     </el-progress></div>
 
             </el-col>
 
             <el-col :span="2" style="display: flex; flex-direction: column; gap: 10px; justify-content: space-between;">
-                <el-button plain size="small" v-if="props.taskItem.status === 'Paused'"
+                <el-button plain size="small" v-if="props.taskItem.state.status === 'Paused'"
                     @click="startTask(props.taskItem.hash)" type="success" :loading="actionLoading[props.taskItem.hash]"
                     icon="VideoPlay">
                 </el-button>
-                <el-button plain size="small" v-if="props.taskItem.status === 'Downloading'"
+                <el-button plain size="small" v-if="props.taskItem.state.status === 'Downloading'"
                     @click="stopTask(props.taskItem.hash)" type="warning" :loading="actionLoading[props.taskItem.hash]"
                     icon="VideoPause">
                 </el-button>
