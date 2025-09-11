@@ -29,12 +29,14 @@
             </el-radio-group>
         </el-form-item>
         <el-form-item label="做种时间限制">
-            <el-input-number v-model="taskData.seeding_time_limit" :placeholder="-2">
+            <el-input-number v-model="taskData.seeding_time_limit"
+                :placeholder="seeding_time_limit_placeholder">
                 <template #suffix>分钟</template>
             </el-input-number>
         </el-form-item>
         <el-form-item label="分享率限制">
-            <el-input-number v-model="taskData.ratio_limit" :precision="2" :placeholder="-2" :step="0.1" />
+            <el-input-number v-model="taskData.ratio_limit" :precision="2"
+                :placeholder="ratio_limit_placeholder" :step="0.1" />
         </el-form-item>
     </el-form>
     <div class="warning-box flex-center">
@@ -69,7 +71,12 @@ const rules = ref({
     upload_type: [{ required: true, message: '请选择上传工具', trigger: 'change' }],
     max_size: [{ required: true, message: '请输入文件大小限制', trigger: 'blur' }]
 })
-
+const seeding_time_limit_placeholder = computed(() => {
+    return CONFIG.value.qb.default_seeding_time_limit || -2
+})
+const ratio_limit_placeholder = computed(() => {
+    return CONFIG.value.qb.default_ratio_limit || -2.0
+})
 const checkUploader = async () => {
     let test_req = {
         test_type: taskData.value.upload_type.type,

@@ -90,8 +90,8 @@ const taskAdd = ref({
     },
     upload_path: '',
     max_size: null,
-    seeding_time_limit: -2,
-    ratio_limit: -2,
+    seeding_time_limit: null,
+    ratio_limit: null,
     custom_content: false,
     selected_file_index: null
 })
@@ -162,8 +162,8 @@ const show = () => {
             },
             upload_path: '',
             max_size: null,
-            seeding_time_limit: -2,
-            ratio_limit: -2,
+            seeding_time_limit: null,
+            ratio_limit: null,
             custom_content: false,
             selected_file_index: null
         }
