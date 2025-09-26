@@ -9,7 +9,7 @@
         </div>
 
         <div v-else class="tasks-container flex-center" style="flex-direction:column; gap: 16px;">
-            <ListItem v-for="task in tasks" :taskItem="task" :key="task.hash" @refresh="refreshTasks"
+            <Item v-for="task in tasks" :taskItem="task" :key="task.hash" @refresh="refreshTasks"
                 :style="{ width: listWidth }" />
         </div>
     </div>
@@ -18,7 +18,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted, computed } from 'vue'
 import api from '../api'
-import ListItem from './ListItem.vue'
+import Item from './Item.vue'
 import { useWindowSize } from '@vueuse/core'
 
 // 响应式数据
