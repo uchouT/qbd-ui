@@ -204,12 +204,16 @@ const handleUrlConfirm = async () => {
         .then(res => {
             if (res['data']) {
                 taskAdd.value.torrent_res = res['data'];
+            }
+        });
+
+    await api.put(`/api/torrent?hash=${taskAdd.value.torrent_res.hash}`)
+        .then(res => {
+            if (res.data) {
+                taskAdd.value.torrent_res.torrent_name = res.data;
                 torrentParsed.value = true
             }
-        })
-        .finally(() => {
-            metadataDownloading.value = false
-        })
+        }).finally(() => metadataDownloading.value = false)
 }
 
 // File 页面的确认处理
@@ -262,7 +266,7 @@ const handleUploadError = (error, file) => {
 }
 
 const deleteMetaAwaiting = async () => {
-    await api.del(`/api/torrent`)
+    await api.del(`/api/torrent?hash=${taskAdd.value.torrent_res.hash}&fetching=true`)
         .then(res => {
             ElMessage.success("种子删除成功")
         })
